@@ -8,6 +8,7 @@ from trulens_eval import Feedback
 from trulens_eval import Select
 from trulens_eval import Tru
 from trulens_eval.feedback.provider.litellm import LiteLLM
+from trulens_eval.feedback.provider.hugs import Huggingface
 
 load_dotenv()
 
@@ -25,13 +26,19 @@ tru = Tru(database_url=db_url)
 
 provider = LiteLLM(model_engine="replicate/snowflake/snowflake-arctic-instruct")
 small_local_model_provider = SmallLocalModels()
+hugs_provider = Huggingface()
 
 f_groundedness = (
     Feedback(
         provider.groundedness_measure_with_cot_reasons, name="Groundedness"
     ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
 )
-f_groundedness_measure_with_nli = (
+f_groundedness_measure_with_nli_remote = (
+    Feedback(
+        hugs_provider.groundedness_measure_with_nli, name="[Small Remote Model] Groundedness"
+    ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
+)
+f_groundedness_measure_with_nli_local = (
     Feedback(
         small_local_model_provider.groundedness_measure_with_nli, name="[Small Local Model] Groundedness"
     ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
@@ -85,7 +92,8 @@ feedbacks_rag = [
     f_small_local_models_context_relevance,
     f_answer_relevance,
     f_groundedness,
-    f_groundedness_measure_with_nli,
+    f_groundedness_measure_with_nli_remote,
+    f_groundedness_measure_with_nli_local,
     f_criminality_input,
     f_criminality_output,
 ]
