@@ -31,6 +31,11 @@ f_groundedness = (
         provider.groundedness_measure_with_cot_reasons, name="Groundedness"
     ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
 )
+f_groundedness_measure_with_nli = (
+    Feedback(
+        small_local_model_provider.groundedness_measure_with_nli, name="[Small Local Model] Groundedness"
+    ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
+)
 f_context_relevance = (
     Feedback(provider.context_relevance,
              name="Context Relevance").on_input().on(
@@ -80,6 +85,7 @@ feedbacks_rag = [
     f_small_local_models_context_relevance,
     f_answer_relevance,
     f_groundedness,
+    f_groundedness_measure_with_nli,
     f_criminality_input,
     f_criminality_output,
 ]
