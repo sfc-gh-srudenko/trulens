@@ -1,7 +1,7 @@
 import json
 import pathlib
 import threading
-from typing import Dict
+from typing import Dict, Optional
 
 from conversation_manager import ConversationManager
 # feedback functions
@@ -284,7 +284,17 @@ def get_icon(fdef: FeedbackDefinition, result: float):
 def chat_response(
     conversation: Conversation,
     container=None,
+    category: Optional[str] = None,
 ):
+    #print("HI 1")
+    #print(conversation.messages)
+    #print("HI 2")
+    #print(conversation.model_config)
+    #print("HI 3")
+    #print(conversation.feedback)
+    #print("HI 4")
+    #print(conversation.has_error)
+    #print("HI 5")
     conversation.add_message(
         Message(role="assistant", content=""),
         render=False,
@@ -298,6 +308,12 @@ def chat_response(
         else:
             chat = st.chat_message("assistant")
         with recorder as context:
+            print("HI 1")
+            if category:
+                print("HI 2")
+                context.record_metadata = dict(prompt_category=category)
+                print("HI 3")
+            print("HI 4")
             user_message, prompt = generator.prepare_prompt(conversation)
             if conversation.model_config.use_rag:
                 text_response: str = generator.retrieve_and_generate_response(

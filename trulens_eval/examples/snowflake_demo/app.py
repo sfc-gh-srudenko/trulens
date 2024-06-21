@@ -1,4 +1,8 @@
-from typing import List
+import os
+import pickle
+import random
+import time
+from typing import List, Optional
 
 from common_ui import chat_response
 from common_ui import configure_model
@@ -6,11 +10,15 @@ from common_ui import generate_title
 from common_ui import page_setup
 from common_ui import st_thread
 from conversation_manager import ConversationManager
+import psutil
 from schema import Conversation
 from schema import ConversationFeedback
 from schema import ConversationRecord
 from schema import Message
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
+
+#time.sleep(60)
 
 title = "Chat"
 if st.session_state.get("conversation_title"):
@@ -132,9 +140,14 @@ user_msg = st.empty()
 response = st.empty()
 response_controls = st.empty()
 
-user_input = st.chat_input("Enter your message here."
-                          ) or st.session_state.pop("regenerate", None)
-if user_input:
+with open("./test_set.pickle", "rb") as fh:
+    test_set = pickle.load(fh)
+category = random.choice(list(test_set.keys()))
+prompt = random.choice(test_set[category])
+
+
+def received_user_input(user_input: str, category: Optional[str] = None):
+    time.sleep(270)
     new_msg = Message(role="user", content=user_input)
     for c in conversations:
         c.add_message(new_msg, render=False)
@@ -148,6 +161,7 @@ if user_input:
         args = (
             conversation,
             msg_cols[i],
+            category,
         )
         t = st_thread(target=chat_response, args=args)
         threads.append(t)
@@ -164,6 +178,7 @@ if user_input:
     for t in threads:
         t.join()
     st.rerun()  # Clear stale containers
+
 
 # Add action buttons
 
@@ -328,3 +343,12 @@ if len(conversations[0].messages) > 1:
 
 if st.session_state.pop("pending_feedback", None):
     st.toast("Feedback submitted successfully", icon=":material/rate_review:")
+
+#refresh_count = st_autorefresh(interval=300000, limit=1000000, key="fizzbuzzcounter")
+#print("REFRESH_COUNT:")
+#print(refresh_count)
+#print()
+
+print("LET'S GO!")
+clear_conversation()
+received_user_input(prompt, category)

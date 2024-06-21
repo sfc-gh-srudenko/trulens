@@ -90,7 +90,9 @@ class SmallLocalModels(Provider):
         tokenizer = self.groundedness_tokenizer
         model = self.groundedness_model
         with torch.no_grad():
-            tokens = tokenizer(premise, hypothesis, truncation=True, return_tensors="pt")
+            tokens = tokenizer(
+                premise, hypothesis, truncation=True, return_tensors="pt"
+            )
             output = model(tokens["input_ids"])
             prediction = torch.softmax(output["logits"][0], -1).tolist()
             return prediction[0]

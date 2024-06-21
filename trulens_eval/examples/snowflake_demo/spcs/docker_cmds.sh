@@ -8,7 +8,7 @@ ACCOUNT_NAME="mlplatformtest"
 DB_NAME="dkurokawa"
 SCHEMA_NAME="trulens_demo"
 IMAGE_REPOSITORY_NAME="dkurokawa_trulens_demo_image_repository"
-IMAGE_NAME="trulens_demo"
+IMAGE_NAME="trulens_demo_data_generator"
 IMAGE_TAG="latest"
 USER="dkurokawa"
 
