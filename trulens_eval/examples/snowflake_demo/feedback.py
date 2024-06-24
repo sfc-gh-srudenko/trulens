@@ -7,6 +7,7 @@ import numpy as np
 from trulens_eval import Feedback
 from trulens_eval import Select
 from trulens_eval import Tru
+from trulens_eval.feedback.provider.cortex import Cortex
 from trulens_eval.feedback.provider.hugs import Huggingface
 from trulens_eval.feedback.provider.litellm import LiteLLM
 
@@ -25,6 +26,10 @@ db_url = "snowflake://{user}:{password}@{account}/{dbname}/{schema}?warehouse={w
 tru = Tru(database_url=db_url)
 
 provider = LiteLLM(model_engine="replicate/snowflake/snowflake-arctic-instruct")
+
+# usage - cortex as feedback provider
+# provider = Cortex(model_engine="mixtral-8x7b")
+
 small_local_model_provider = SmallLocalModels()
 hugs_provider = Huggingface()
 

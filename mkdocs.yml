@@ -29,6 +29,9 @@ markdown_extensions:
   # - pymdownx.mark
   # - pymdownx.smartsymbols
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
   # - pymdownx.tasklist:
   #    custom_checkbox: true
   #- pymdownx.tilde
@@ -162,6 +165,7 @@ theme:
     - toc.follow
     # - toc.integrate
     - content.code.copy
+    - content.tabs
 
 nav:
   - 🏠 Home: index.md
@@ -254,6 +258,7 @@ nav:
           - LiteLLM: trulens_eval/api/provider/litellm.md
           - 🦜️🔗 LangChain: trulens_eval/api/provider/langchain.md
           - 🤗 HuggingFace: trulens_eval/api/provider/huggingface.md
+          - Cortex: trulens_eval/api/provider/cortex.md
           - Endpoint:
               - trulens_eval/api/endpoint/index.md
               - OpenAI: trulens_eval/api/endpoint/openai.md

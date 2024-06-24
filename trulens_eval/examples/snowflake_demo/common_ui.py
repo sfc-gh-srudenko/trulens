@@ -136,7 +136,7 @@ def get_tru_app_id(
     model: str, temperature: float, top_p: float, max_new_tokens: int,
     use_rag: bool, retriever: str
 ) -> str:
-    return f"app-prod-{model}{'-' + retriever if use_rag else ''} (temp-{temperature}-topp-{top_p}-maxtokens-{max_new_tokens})"
+    return f"app-prod-{model}{'-' + retriever + '-retrieval-filter' if use_rag else ''} (temp-{temperature}-topp-{top_p}-maxtokens-{max_new_tokens})"
 
 
 def configure_model(
@@ -148,6 +148,7 @@ def configure_model(
     MAX_NEW_TOKENS_KEY = f"max_new_tokens_{key}"
     SYSTEM_PROMPT_KEY = f"system_prompt_{key}"
     USE_RAG_KEY = f"use_rag_{key}"
+    RETRIEVAL_FILTER_KEY = f"retrieval_filter_{key}"
     RETRIEVER_KEY = f"retriever_{key}"
 
     # initialize app metadata for tracking
@@ -164,6 +165,10 @@ def configure_model(
             ),
         "use_rag":
             st.session_state.get(USE_RAG_KEY, model_config.use_rag),
+        "retrieval_filter":
+            st.session_state.get(
+                RETRIEVAL_FILTER_KEY, model_config.retrieval_filter
+            ),
         "retriever":
             st.session_state.get(RETRIEVER_KEY, model_config.retriever),
     }
@@ -262,6 +267,19 @@ def configure_model(
             )
             if model_config.retriever != st.session_state[RETRIEVER_KEY]:
                 st.session_state[RETRIEVER_KEY] = model_config.retriever
+
+                model_config.retrieval_filter = st.slider(
+                    min_value=0,
+                    max_value=1,
+                    step=0.1,
+                    label="Context Relevance Filter for Retrieval",
+                    key=RETRIEVAL_FILTER_KEY
+                )
+
+                if model_config.retrieval_filter != st.session_state[
+                        RETRIEVAL_FILTER_KEY]:
+                    st.session_state[RETRIEVAL_FILTER_KEY
+                                    ] = model_config.retrieval_filter
 
     app_id = get_tru_app_id(**metadata)
     feedbacks = feedbacks_rag if model_config.use_rag else feedbacks_no_rag
