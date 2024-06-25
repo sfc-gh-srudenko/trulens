@@ -42,13 +42,13 @@ f_groundedness_measure_with_nli_remote = (
     Feedback(
         hugs_provider.groundedness_measure_with_nli,
         name="[Small Remote Model] Groundedness"
-    ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
+    ).on(Select.RecordCalls.retrieve_context.rets[:]).on_output()
 )
 f_groundedness_measure_with_nli_local = (
     Feedback(
         small_local_model_provider.groundedness_measure_with_nli,
         name="[Small Local Model] Groundedness"
-    ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
+    ).on(Select.RecordCalls.retrieve_context.rets[:]).on_output()
 )
 f_context_relevance = (
     Feedback(provider.context_relevance,
