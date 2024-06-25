@@ -36,7 +36,7 @@ hugs_provider = Huggingface()
 f_groundedness = (
     Feedback(
         provider.groundedness_measure_with_cot_reasons, name="Groundedness"
-    ).on(Select.RecordCalls.retrieve_context.rets[1][:]).on_output()
+    ).on(Select.RecordCalls.retrieve_context.rets[:]).on_output()
 )
 f_groundedness_measure_with_nli_remote = (
     Feedback(
@@ -53,7 +53,7 @@ f_groundedness_measure_with_nli_local = (
 f_context_relevance = (
     Feedback(provider.context_relevance,
              name="Context Relevance").on_input().on(
-                 Select.RecordCalls.retrieve_context.rets[1][:]
+                 Select.RecordCalls.retrieve_context.rets[:]
              ).aggregate(np.mean
                         )  # choose a different aggregation method if you wish
 )
@@ -61,7 +61,7 @@ f_small_local_models_context_relevance = (
     Feedback(
         small_local_model_provider.context_relevance,
         name="[Small Local Model] Context Relevance",
-    ).on_input().on(Select.RecordCalls.retrieve_context.rets[1][:]).aggregate(
+    ).on_input().on(Select.RecordCalls.retrieve_context.rets[:]).aggregate(
         np.mean
     )  # choose a different aggregation method if you wish
 )

@@ -134,9 +134,9 @@ def login():
 
 def get_tru_app_id(
     model: str, temperature: float, top_p: float, max_new_tokens: int,
-    use_rag: bool, retriever: str
+    use_rag: bool, retriever: str, retrieval_filter: float
 ) -> str:
-    return f"app-prod-{model}{'-' + retriever + '-retrieval-filter' if use_rag else ''} (temp-{temperature}-topp-{top_p}-maxtokens-{max_new_tokens})"
+    return f"app-prod-{model}{'-' + retriever if use_rag else ''}{('-retrieval-filter-' + str(retrieval_filter)) if use_rag else ''} (temp-{temperature}-topp-{top_p}-maxtokens-{max_new_tokens})"
 
 
 def configure_model(
@@ -180,6 +180,8 @@ def configure_model(
         st.session_state[MAX_NEW_TOKENS_KEY] = model_config.max_new_tokens
         st.session_state[USE_RAG_KEY] = model_config.use_rag
         st.session_state[RETRIEVER_KEY] = model_config.retriever
+        st.session_state[RETRIEVAL_FILTER_KEY] = model_config.retrieval_filter
+
         metadata = {
             "model": st.session_state[MODEL_KEY],
             "temperature": st.session_state[TEMPERATURE_KEY],
@@ -187,6 +189,7 @@ def configure_model(
             "max_new_tokens": st.session_state[MAX_NEW_TOKENS_KEY],
             "use_rag": st.session_state[USE_RAG_KEY],
             "retriever": st.session_state[RETRIEVER_KEY],
+            "retrieval_filter": st.session_state[RETRIEVAL_FILTER_KEY],
         }
 
     with container:

@@ -17,7 +17,7 @@ from trulens_eval.feedback import prompts
 
 CONTEXT_RELEVANCE_MODEL_PATH = os.getenv(
     "SMALL_LOCAL_MODELS_CONTEXT_RELEVANCE_MODEL_PATH",
-    "/trulens_demo/small_local_models/context_relevance",
+    "small_local_models/context_relevance",
 )
 GROUNDEDNESS_MODEL_PATH = "MoritzLaurer/DeBERTa-v3-base-mnli-fever-docnli-ling-2c"
 
