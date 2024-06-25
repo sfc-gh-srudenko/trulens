@@ -1,7 +1,7 @@
 import json
 import pathlib
 import threading
-from typing import Dict, Optional
+from typing import Dict
 
 from conversation_manager import ConversationManager
 # feedback functions
@@ -136,6 +136,7 @@ def get_tru_app_id(
     model: str, temperature: float, top_p: float, max_new_tokens: int,
     use_rag: bool, retriever: str, retrieval_filter: float
 ) -> str:
+    # Args are hashed for cache'(' lookup
     return f"app-prod-{model}{'-' + retriever if use_rag else ''}{('-retrieval-filter-' + str(retrieval_filter)) if use_rag else ''} (temp-{temperature}-topp-{top_p}-maxtokens-{max_new_tokens})"
 
 
@@ -166,9 +167,7 @@ def configure_model(
         "use_rag":
             st.session_state.get(USE_RAG_KEY, model_config.use_rag),
         "retrieval_filter":
-            st.session_state.get(
-                RETRIEVAL_FILTER_KEY, model_config.retrieval_filter
-            ),
+            st.session_state.get(RETRIEVAL_FILTER_KEY, model_config.retrieval_filter),
         "retriever":
             st.session_state.get(RETRIEVER_KEY, model_config.retriever),
     }
@@ -183,15 +182,15 @@ def configure_model(
         st.session_state[RETRIEVAL_FILTER_KEY] = model_config.retrieval_filter
 
         metadata = {
-            "model": st.session_state[MODEL_KEY],
-            "temperature": st.session_state[TEMPERATURE_KEY],
-            "top_p": st.session_state[TOP_P_KEY],
-            "max_new_tokens": st.session_state[MAX_NEW_TOKENS_KEY],
-            "use_rag": st.session_state[USE_RAG_KEY],
-            "retriever": st.session_state[RETRIEVER_KEY],
-            "retrieval_filter": st.session_state[RETRIEVAL_FILTER_KEY],
-        }
-
+        "model": st.session_state[MODEL_KEY],
+        "temperature": st.session_state[TEMPERATURE_KEY],
+        "top_p": st.session_state[TOP_P_KEY],
+        "max_new_tokens": st.session_state[MAX_NEW_TOKENS_KEY],
+        "use_rag": st.session_state[USE_RAG_KEY],
+        "retriever": st.session_state[RETRIEVER_KEY],
+        "retrieval_filter": st.session_state[RETRIEVAL_FILTER_KEY],
+    }
+        
     with container:
         with st.popover(f"Configure :blue[{st.session_state[MODEL_KEY]}]",
                         use_container_width=full_width):
@@ -279,10 +278,8 @@ def configure_model(
                     key=RETRIEVAL_FILTER_KEY
                 )
 
-                if model_config.retrieval_filter != st.session_state[
-                        RETRIEVAL_FILTER_KEY]:
-                    st.session_state[RETRIEVAL_FILTER_KEY
-                                    ] = model_config.retrieval_filter
+                if model_config.retrieval_filter != st.session_state[RETRIEVAL_FILTER_KEY]:
+                    st.session_state[RETRIEVAL_FILTER_KEY] = model_config.retrieval_filter
 
     app_id = get_tru_app_id(**metadata)
     feedbacks = feedbacks_rag if model_config.use_rag else feedbacks_no_rag
@@ -305,17 +302,7 @@ def get_icon(fdef: FeedbackDefinition, result: float):
 def chat_response(
     conversation: Conversation,
     container=None,
-    category: Optional[str] = None,
 ):
-    #print("HI 1")
-    #print(conversation.messages)
-    #print("HI 2")
-    #print(conversation.model_config)
-    #print("HI 3")
-    #print(conversation.feedback)
-    #print("HI 4")
-    #print(conversation.has_error)
-    #print("HI 5")
     conversation.add_message(
         Message(role="assistant", content=""),
         render=False,
@@ -329,12 +316,6 @@ def chat_response(
         else:
             chat = st.chat_message("assistant")
         with recorder as context:
-            print("HI 1")
-            if category:
-                print("HI 2")
-                context.record_metadata = dict(prompt_category=category)
-                print("HI 3")
-            print("HI 4")
             user_message, prompt = generator.prepare_prompt(conversation)
             if conversation.model_config.use_rag:
                 text_response: str = generator.retrieve_and_generate_response(
