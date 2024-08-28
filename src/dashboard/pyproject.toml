@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "trulens-dashboard"
-version = "1.0.1a1"
+version = "1.0.1a3"
 description = "Library to systematically track and evaluate LLM based applications."
 readme = "README.md"
 license = { text = "MIT License" }
