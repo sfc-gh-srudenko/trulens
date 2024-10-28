@@ -10,7 +10,7 @@ to your path.
 
     ```bash
     conda create -n "<my_name>" python=3  # Skip if using existing environment.
-    conda activate <my_name>
+    conda activate "<my_name>"
     ```
 
 2. [Pip installation] Install the trulens pip package from PyPI.
