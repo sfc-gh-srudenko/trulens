@@ -41,7 +41,7 @@ pipeline {
             steps {
                 sh label: 'Dependencies Install', script: '''
                     apt-get -y update
-                    apt-get -y install curl
+                    apt-get -y install curl git
                     curl -sSL https://install.python-poetry.org | python3 -
                     ln -s /root/.local/bin/poetry /usr/local/bin/poetry
                     echo "Using $(python --version) ($(which python)) $(poetry -V)"
@@ -49,6 +49,8 @@ pipeline {
                     poetry run pip install pip==24.1.2
                     poetry run python --version
                     poetry run pip --version
+                '''
+                sh label: 'Pre-commit hooks', script: '''
                     poetry install --only dev --sync
                     make run-precommit
                 '''
