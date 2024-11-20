@@ -24,7 +24,7 @@ pipeline {
     agent {
         docker {
             label 'regular-memory-node-c7'
-            image 'python:3.12'
+            image 'python:3.11'
             reuseNode true
             alwaysPull false
             args '-u root'
@@ -37,9 +37,21 @@ pipeline {
     }
 
     stages {
-        stage('checkout') {
+        stage('prepare') {
             steps {
-                echo "Checkout"
+                sh label: 'Dependencies Install', script: '''
+                    apt-get -y update
+                    apt-get -y install curl
+                    curl -sSL https://install.python-poetry.org | python3 -
+                    ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+                    echo "Using $(python --version) ($(which python)) $(poetry -V)"
+                    poetry config virtualenvs.create false
+                    poetry run pip install pip==24.1.2
+                    poetry run python --version
+                    poetry run pip --version
+                    poetry install --only dev --sync
+                    make run-precommit
+                '''
             }
         }
         stage('vault test') {
